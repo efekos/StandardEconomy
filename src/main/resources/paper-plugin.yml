@@ -1,0 +1,8 @@
+name: StandardEconomy
+version: '1.0-SNAPSHOT'
+main: dev.efekos.se.StandardEconomy
+api-version: '1.21'
+prefix: SE
+authors: [ efekos ]
+description: Basic, essential economy commands for Vault.
+website: https://github.com/efekos/StandardEconomy
