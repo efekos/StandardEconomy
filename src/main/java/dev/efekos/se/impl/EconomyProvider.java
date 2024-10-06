@@ -1,14 +1,17 @@
 package dev.efekos.se.impl;
 
 import dev.efekos.se.StandardEconomy;
+import dev.efekos.se.data.PlayerAccount;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class EconomyProvider implements Economy {
 
@@ -77,82 +80,92 @@ public class EconomyProvider implements Economy {
 
     @Override
     public double getBalance(String playerName) {
-        return 0;
+        return Optional.ofNullable(parent.getAccount(playerName)).map(PlayerAccount::getBalance).orElse(0d);
     }
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return 0;
+        return parent.getAccount(player).getBalance();
     }
 
     @Override
     public double getBalance(String playerName, String world) {
-        return 0;
+        return getBalance(playerName);
     }
 
     @Override
     public double getBalance(OfflinePlayer player, String world) {
-        return 0;
+        return getBalance(player);
     }
 
     @Override
     public boolean has(String playerName, double amount) {
-        return false;
+        return getBalance(playerName) >= amount;
     }
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return false;
+        return getBalance(player) >= amount;
     }
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        return false;
+        return has(playerName, amount);
     }
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
-        return false;
+        return has(player, amount);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return null;
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        return withdrawPlayer(offlinePlayer, amount);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        return null;
+        PlayerAccount account = parent.getAccount(player);
+        if(account==null)return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not exist");
+        if(account.getBalance()<amount) return new EconomyResponse(0,account.getBalance(), EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not have enough money");
+        account.setBalance(account.getBalance()-amount);
+        return new EconomyResponse(amount,account.getBalance(), EconomyResponse.ResponseType.SUCCESS,null);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return null;
+        return withdrawPlayer(playerName, amount);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        return withdrawPlayer(player, amount);
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        return null;
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        return depositPlayer(offlinePlayer, amount);
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        return null;
+        PlayerAccount account = parent.getAccount(player);
+        if(account==null)return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not exist");
+        if(account.getBalance()<amount) return new EconomyResponse(0,account.getBalance(), EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not have enough money");
+        account.setBalance(account.getBalance()+amount);
+        return new EconomyResponse(amount,account.getBalance(), EconomyResponse.ResponseType.SUCCESS,null);
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return null;
+        return depositPlayer(playerName, amount);
     }
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        return depositPlayer(player, amount);
     }
 
     @Override
