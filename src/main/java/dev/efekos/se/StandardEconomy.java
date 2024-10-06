@@ -76,10 +76,6 @@ public final class StandardEconomy extends JavaPlugin {
         return config.getInt("digits",0);
     }
 
-    public PlayerAccount getAccount(UUID uuid) {
-        return getAccount(Bukkit.getOfflinePlayer(uuid));
-    }
-
     public PlayerAccount getAccount(OfflinePlayer player){
         return accounts.getRow(player.getUniqueId()).orElse(accounts.insertRow(playerAccount -> {
             playerAccount.setId(player.getUniqueId());
@@ -89,9 +85,7 @@ public final class StandardEconomy extends JavaPlugin {
     }
 
     public PlayerAccount getAccount(String name) {
-        QueryResult<PlayerAccount> result = accounts.query(new QueryBuilder().filterWithCondition(Conditions.matchTextExact("name", name)).limit(1).getQuery());
-        if(!result.hasResult()) return null;
-        return result.result().getFirst();
+        return getAccount(Bukkit.getOfflinePlayer(name));
     }
 
 }
