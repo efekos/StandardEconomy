@@ -8,14 +8,16 @@ import dev.efekos.se.impl.EconomyProvider;
 import dev.efekos.simple_ql.SimpleQL;
 import dev.efekos.simple_ql.data.Database;
 import dev.efekos.simple_ql.data.Table;
-import me.lucko.commodore.Commodore;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.lucko.commodore.CommodoreProvider;
 
 import java.nio.file.Path;
 
@@ -43,10 +45,11 @@ public final class StandardEconomy extends JavaPlugin {
         getServer().getCommandMap().register("bal","se",new BalanceCommand("bal"));
         getServer().getCommandMap().register("money","se",new BalanceCommand("money"));
 
-        if(CommodoreProvider.isSupported()){
-            Commodore commodore = CommodoreProvider.getCommodore(this);
-            new EconomyCommand().register(commodore);
-        }
+        LifecycleEventManager<Plugin> manager = getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS,e->{
+            Commands registrar = e.registrar();
+            new EconomyCommand().register(registrar);
+        });
     }
 
     public static EconomyProvider getProvider() {

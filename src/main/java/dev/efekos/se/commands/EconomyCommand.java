@@ -1,32 +1,27 @@
 package dev.efekos.se.commands;
 
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
-import me.lucko.commodore.Commodore;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
-public class EconomyCommand implements CommondoreCommand{
+public class EconomyCommand implements BrigaiderCommand {
 
     @Override
-    public void register(Commodore commodore) {
-        commodore.register(LiteralArgumentBuilder.literal("economy")
-                        .requires(o ->
-                            ((CommandSourceStack) o).getSender().hasPermission("economy.admin")
-                        )
-                .then(LiteralArgumentBuilder.literal("set")
-                        .then(RequiredArgumentBuilder.argument("target", ArgumentTypes.player())
-                                .then(RequiredArgumentBuilder.argument("amount", ArgumentTypes.doubleRange())
-                                        .executes(commandContext -> set(((CommandSourceStack) commandContext.getSource()),commandContext.getArgument("target", Player.class),commandContext.getArgument("amount",Double.class)))
+    public void register(Commands commodore) {
+        commodore.register(Commands.literal("economy")
+                        .requires(o -> o.getSender().hasPermission("economy.admin"))
+                .then(Commands.literal("set")
+                        .then(Commands.argument("target", ArgumentTypes.player())
+                                .then(Commands.argument("amount", ArgumentTypes.doubleRange())
+                                        .executes(commandContext -> set(commandContext.getSource(),commandContext.getArgument("target", Player.class),commandContext.getArgument("amount",Double.class)))
                                 )
                         )
-                )
-        );
+                ).build());
     }
 
     private int set(CommandSourceStack source, Player target, Double amount) {

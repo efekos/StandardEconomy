@@ -43,18 +43,10 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>me.lucko:commodore</include>
                             <include>dev.efekos:SimpleQL</include>
                             <include>com.github.xerial:sqlite-jdbc</include>
                         </includes>
                     </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>me.lucko.commodore</pattern>
-                            <!-- vvv Replace with the package of your plugin vvv -->
-                            <shadedPattern>dev.efekos.se.commodore</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,10 +83,7 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>minecraft-repo</id>
-            <url>https://libraries.minecraft.net/</url>
-        </repository>
+
     </repositories>
 
     <dependencies>
@@ -121,10 +110,9 @@
             <version>3.45.2.0</version>
         </dependency>
         <dependency>
-            <groupId>me.lucko</groupId>
-            <artifactId>commodore</artifactId>
-            <version>2.2</version>
-            <scope>compile</scope>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
         </dependency>
     </dependencies>
 </project>
