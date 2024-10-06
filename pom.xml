@@ -40,6 +40,22 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>me.lucko:commodore</include>
+                            <include>dev.efekos:SimpleQL</include>
+                            <include>com.github.xerial:sqlite-jdbc</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>me.lucko.commodore</pattern>
+                            <!-- vvv Replace with the package of your plugin vvv -->
+                            <shadedPattern>dev.efekos.se.commodore</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -75,6 +91,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,11 +103,6 @@
             <artifactId>paper-api</artifactId>
             <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.efekos</groupId>
-            <artifactId>Arn</artifactId>
-            <version>0.3.4</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -104,6 +119,12 @@
             <groupId>com.github.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>commodore</artifactId>
+            <version>2.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

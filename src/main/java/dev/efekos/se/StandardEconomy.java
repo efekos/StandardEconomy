@@ -1,29 +1,29 @@
 package dev.efekos.se;
 
+import dev.efekos.se.commands.BalanceCommand;
+import dev.efekos.se.commands.EconomyCommand;
 import dev.efekos.se.config.Config;
 import dev.efekos.se.data.PlayerAccount;
 import dev.efekos.se.impl.EconomyProvider;
 import dev.efekos.simple_ql.SimpleQL;
 import dev.efekos.simple_ql.data.Database;
 import dev.efekos.simple_ql.data.Table;
-import dev.efekos.simple_ql.query.Conditions;
-import dev.efekos.simple_ql.query.QueryBuilder;
-import dev.efekos.simple_ql.query.QueryResult;
+import me.lucko.commodore.Commodore;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import me.lucko.commodore.CommodoreProvider;
 
 import java.nio.file.Path;
-import java.util.UUID;
 
 public final class StandardEconomy extends JavaPlugin {
 
     private Config config;
-    private Database database;
     private Table<PlayerAccount> accounts;
+    private static EconomyProvider provider;
 
     @Override
     public void onEnable() {
@@ -32,15 +32,32 @@ public final class StandardEconomy extends JavaPlugin {
         setupConfig();
         setupDatabase();
         if (setupEconomy()) return;
+        setupCommands();
 
         long ms = System.currentTimeMillis() - start;
         getLogger().info("Enabled StandardEconomy (took "+ms+"ms)");
     }
 
+    private void setupCommands() {
+        getServer().getCommandMap().register("balance","se",new BalanceCommand("balance"));
+        getServer().getCommandMap().register("bal","se",new BalanceCommand("bal"));
+        getServer().getCommandMap().register("money","se",new BalanceCommand("money"));
+
+        if(CommodoreProvider.isSupported()){
+            Commodore commodore = CommodoreProvider.getCommodore(this);
+            new EconomyCommand().register(commodore);
+        }
+    }
+
+    public static EconomyProvider getProvider() {
+        return provider;
+    }
+
     private boolean setupEconomy() {
         if(foundVault()){
             getLogger().info("Found Vault. Hooking...");
-            getServer().getServicesManager().register(Economy.class,new EconomyProvider(this),this, ServicePriority.Highest);
+            provider = new EconomyProvider(this);
+            getServer().getServicesManager().register(Economy.class,provider,this, ServicePriority.Highest);
             getLogger().info("Hooked into Vault.");
             return false;
         } else {
@@ -56,7 +73,7 @@ public final class StandardEconomy extends JavaPlugin {
     private void setupDatabase() {
         boolean useMySql = config.getBoolean("database.enable-external-databases", false);
         String url = useMySql ? "jdbc:mysql:" + config.getString("database.host", "localhost") + ":" + config.getString("database.port", "3306") : "jdbc:sqlite:" + Path.of(getDataFolder().getAbsolutePath(), "database");
-        database = useMySql ? SimpleQL.createDatabase(url,"dev_efekos_se",config.getString("database.username","admin"),config.getString("database.password","admin")) : SimpleQL.createDatabase(url);
+        Database database = useMySql ? SimpleQL.createDatabase(url, "dev_efekos_se", config.getString("database.username", "admin"), config.getString("database.password", "admin")) : SimpleQL.createDatabase(url);
         accounts = database.registerTable("accounts",PlayerAccount.class);
     }
     private void setupConfig() {
@@ -77,7 +94,7 @@ public final class StandardEconomy extends JavaPlugin {
     }
 
     public PlayerAccount getAccount(OfflinePlayer player){
-        return accounts.getRow(player.getUniqueId()).orElse(accounts.insertRow(playerAccount -> {
+        return accounts.getRow(player.getUniqueId()).orElseGet(() -> accounts.insertRow(playerAccount -> {
             playerAccount.setId(player.getUniqueId());
             playerAccount.setBalance(0);
             playerAccount.setName(player.getName());
