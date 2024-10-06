@@ -6,6 +6,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -153,7 +154,6 @@ public class EconomyProvider implements Economy {
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
         PlayerAccount account = parent.getAccount(player);
         if(account==null)return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not exist");
-        if(account.getBalance()<amount) return new EconomyResponse(0,account.getBalance(), EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not have enough money");
         account.setBalance(account.getBalance()+amount);
         return new EconomyResponse(amount,account.getBalance(), EconomyResponse.ResponseType.SUCCESS,null);
     }
@@ -259,4 +259,11 @@ public class EconomyProvider implements Economy {
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
         return true;
     }
+
+    public void setBalance(Player target, Double amount) {
+        PlayerAccount account = parent.getAccount(target);
+        account.setBalance(amount);
+        account.clean();
+    }
+
 }
