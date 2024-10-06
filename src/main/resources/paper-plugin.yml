@@ -6,3 +6,9 @@ prefix: SE
 authors: [ efekos ]
 description: Basic, essential economy commands for Vault.
 website: https://github.com/efekos/StandardEconomy
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: false
+      join-classpath: true
