@@ -5,15 +5,19 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 
 public class EconomyProvider implements Economy {
 
     private final StandardEconomy parent;
+    private final NumberFormat format;
 
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
+        this.format = new DecimalFormat(parent.getCurrencySymbol()+"#0."+"0".repeat(parent.getFractionalDigits()));
     }
 
     @Override
@@ -23,12 +27,12 @@ public class EconomyProvider implements Economy {
 
     @Override
     public String getName() {
-        return "";
+        return "StandardEconomy";
     }
 
     @Override
     public boolean hasBankSupport() {
-        return false;
+        return parent.areBanksEnabled();
     }
 
     @Override
@@ -38,7 +42,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public String format(double amount) {
-        return "";
+        return format.format(amount);
     }
 
     @Override
@@ -63,12 +67,12 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean hasAccount(String playerName, String worldName) {
-        return true;
+        return hasAccount(playerName);
     }
 
     @Override
     public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return true;
+        return hasAccount(player);
     }
 
     @Override
@@ -225,21 +229,21 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean createPlayerAccount(String playerName) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
-        return false;
+        return true;
     }
 }
