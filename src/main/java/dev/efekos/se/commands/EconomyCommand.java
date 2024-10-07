@@ -60,8 +60,8 @@ public class EconomyCommand implements BrigaiderCommand {
     private int remove(CommandSourceStack source, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();
         provider.setBalance(target, provider.getBalance(target) - amount);
-        source.getSender().sendMessage(format("<yellow>Removed <amount> from <target>'s balance.", Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
-        target.sendMessage(format("<yellow><amount> has been removed from your balance.", Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN))));
+        source.getSender().sendMessage(format("<yellow>Removed <amount> from <target>'s balance.", Placeholder.component("amount", provider.createComponent(amount)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
+        target.sendMessage(format("<yellow><amount> has been removed from your balance.", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
@@ -71,7 +71,7 @@ public class EconomyCommand implements BrigaiderCommand {
         source.getSender().sendMessage(format("<yellow>Added <amount> to <target>'s balance.",
                 Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))
         ));
-        target.sendMessage(format("<yellow><amount> has been added to your balance.", Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN))));
+        target.sendMessage(format("<yellow><amount> has been added to your balance.", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
@@ -80,7 +80,7 @@ public class EconomyCommand implements BrigaiderCommand {
         provider.setBalance(target, amount);
         source.getSender().sendMessage(format("<yellow>Changed <target>'s balance to <amount>.",
                 Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
-        target.sendMessage(format("<yellow>Your balance has been changed to <amount>.", Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN))));
+        target.sendMessage(format("<yellow>Your balance has been changed to <amount>.", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 

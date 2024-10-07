@@ -2,6 +2,8 @@ package dev.efekos.se.impl;
 
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.data.PlayerAccount;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -21,6 +23,10 @@ public class EconomyProvider implements Economy {
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
         this.format = new DecimalFormat(parent.getCurrencySymbol() + "#0." + "0".repeat(parent.getFractionalDigits()));
+    }
+
+    public Component createComponent(double amount) {
+        return Component.text(format.format(amount), NamedTextColor.GREEN).hoverEvent(Component.text(amount+" "+parent.getCurrencyName(amount!=1),NamedTextColor.GREEN));
     }
 
     @Override

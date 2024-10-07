@@ -35,7 +35,7 @@ public class BalanceCommand implements BrigaiderCommand {
         double balance = provider.getBalance(target);
         boolean self = source.getSender() instanceof Player p && p.getUniqueId().equals(target.getUniqueId());
         source.getSender().sendMessage(format(self ? "<yellow>Your balance: <amount>" : "<yellow><target>'s balance: <amount>",
-                Placeholder.component("amount", Component.text(provider.format(balance), NamedTextColor.GREEN)),
+                Placeholder.component("amount", provider.createComponent(balance)),
                 Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))
         ));
         return 0;
