@@ -17,6 +17,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static dev.efekos.se.StandardEconomy.format;
 
@@ -52,7 +53,7 @@ public class EconomyCommand implements BrigaiderCommand {
                                 .executes(commandContext -> reset(commandContext.getSource(),commandContext.getArgument("target", Player.class)))
                         )
                 )
-                .build());
+                .build(), List.of("eco"));
     }
 
     private int reset(CommandSourceStack source, Player target) {
