@@ -2,35 +2,38 @@ package dev.efekos.se.commands;
 
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-public class BalanceCommand extends Command {
+import java.util.List;
 
-    public BalanceCommand(@NotNull String name) {
-        super(name);
-    }
+import static dev.efekos.se.StandardEconomy.format;
+
+public class BalanceCommand implements BrigaiderCommand {
 
     @Override
-    public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
-        if(!(commandSender instanceof Player p)) {
-            commandSender.sendMessage(Component.text("This command can only be used by a player!", NamedTextColor.RED));
-            return true;
-        }
-
-        EconomyProvider provider = StandardEconomy.getProvider();
-        double balance = provider.getBalance(p);
-        p.sendMessage(Component.join(
-                JoinConfiguration.builder().separator(Component.space()).build(),
-                Component.text("Your balance:", NamedTextColor.YELLOW),Component.text(provider.format(balance),NamedTextColor.GREEN)
-        ));
-
-        return true;
+    public void register(Commands commands) {
+        commands.register(Commands.literal("bal")
+                .then(Commands.argument("target", ArgumentTypes.player()).executes(commandContext -> bal(
+                        commandContext.getSource(),
+                        commandContext.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(commandContext.getSource()).getFirst())))
+                .build(), List.of("balance", "money"));
     }
 
+    private int bal(CommandSourceStack source, Player target) {
+        EconomyProvider provider = StandardEconomy.getProvider();
+        double balance = provider.getBalance(target);
+        boolean self = source.getSender() instanceof Player p && p.getUniqueId().equals(target.getUniqueId());
+        format(self ? "<yellow>Your balance: <amount>" : "<yellow><target>'s balance: <amount>",
+                Placeholder.component("amount", Component.text(provider.format(balance), NamedTextColor.AQUA)),
+                Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))
+        );
+        return 0;
+    }
 }

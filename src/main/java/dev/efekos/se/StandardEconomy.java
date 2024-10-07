@@ -23,6 +23,7 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
+import java.util.List;
 
 public final class StandardEconomy extends JavaPlugin {
 
@@ -44,14 +45,10 @@ public final class StandardEconomy extends JavaPlugin {
     }
 
     private void setupCommands() {
-        getServer().getCommandMap().register("balance","se",new BalanceCommand("balance"));
-        getServer().getCommandMap().register("bal","se",new BalanceCommand("bal"));
-        getServer().getCommandMap().register("money","se",new BalanceCommand("money"));
-
         LifecycleEventManager<Plugin> manager = getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS,e->{
             Commands registrar = e.registrar();
-            new EconomyCommand().register(registrar);
+            List.of(new EconomyCommand(),new BalanceCommand()).forEach(c -> c.register(registrar));
         });
     }
 
