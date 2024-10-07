@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+import static dev.efekos.se.StandardEconomy.format;
+
 public class EconomyCommand implements BrigaiderCommand {
 
     @Override
@@ -57,9 +59,6 @@ public class EconomyCommand implements BrigaiderCommand {
         return set(source,target,50d);
     }
 
-    private Component format(String message, TagResolver...  components){
-        return MiniMessage.builder().build().deserialize(message,components);
-    }
 
     private int remove(CommandSourceStack source, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();

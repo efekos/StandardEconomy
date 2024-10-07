@@ -11,6 +11,9 @@ import dev.efekos.simple_ql.data.Table;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -54,6 +57,10 @@ public final class StandardEconomy extends JavaPlugin {
 
     public static EconomyProvider getProvider() {
         return provider;
+    }
+
+    public static Component format(String message, TagResolver...  components){
+        return MiniMessage.builder().build().deserialize(message,components);
     }
 
     private boolean setupEconomy() {
