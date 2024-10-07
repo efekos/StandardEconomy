@@ -20,7 +20,10 @@ public class BalanceCommand implements BrigaiderCommand {
     @Override
     public void register(Commands commands) {
         commands.register(Commands.literal("bal")
-                        .executes(commandContext -> {if(commandContext.getSource().getSender() instanceof Player p) bal(commandContext.getSource(),p);return 0;})
+                .executes(commandContext -> {
+                    if (commandContext.getSource().getSender() instanceof Player p) bal(commandContext.getSource(), p);
+                    return 0;
+                })
                 .then(Commands.argument("target", ArgumentTypes.player()).executes(commandContext -> bal(
                         commandContext.getSource(),
                         commandContext.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(commandContext.getSource()).getFirst())))

@@ -20,7 +20,7 @@ public class EconomyProvider implements Economy {
 
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
-        this.format = new DecimalFormat(parent.getCurrencySymbol()+"#0."+"0".repeat(parent.getFractionalDigits()));
+        this.format = new DecimalFormat(parent.getCurrencySymbol() + "#0." + "0".repeat(parent.getFractionalDigits()));
     }
 
     @Override
@@ -127,11 +127,13 @@ public class EconomyProvider implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         PlayerAccount account = parent.getAccount(player);
-        if(account==null)return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not exist");
-        if(account.getBalance()<amount) return new EconomyResponse(0,account.getBalance(), EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not have enough money");
-        account.setBalance(account.getBalance()-amount);
+        if (account == null)
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player '" + player.getName() + "' does not exist");
+        if (account.getBalance() < amount)
+            return new EconomyResponse(0, account.getBalance(), EconomyResponse.ResponseType.FAILURE, "Player '" + player.getName() + "' does not have enough money");
+        account.setBalance(account.getBalance() - amount);
         account.clean();
-        return new EconomyResponse(amount,account.getBalance(), EconomyResponse.ResponseType.SUCCESS,null);
+        return new EconomyResponse(amount, account.getBalance(), EconomyResponse.ResponseType.SUCCESS, null);
     }
 
     @Override
@@ -153,10 +155,11 @@ public class EconomyProvider implements Economy {
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
         PlayerAccount account = parent.getAccount(player);
-        if(account==null)return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE,"Player '"+player.getName()+"' does not exist");
-        account.setBalance(account.getBalance()+amount);
+        if (account == null)
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player '" + player.getName() + "' does not exist");
+        account.setBalance(account.getBalance() + amount);
         account.clean();
-        return new EconomyResponse(amount,account.getBalance(), EconomyResponse.ResponseType.SUCCESS,null);
+        return new EconomyResponse(amount, account.getBalance(), EconomyResponse.ResponseType.SUCCESS, null);
     }
 
     @Override
@@ -171,73 +174,84 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse createBank(String name, String player) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse createBank(String name, OfflinePlayer player) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse deleteBank(String name) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse bankBalance(String name) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse bankHas(String name, double amount) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse bankWithdraw(String name, double amount) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse bankDeposit(String name, double amount) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, String playerName) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse isBankMember(String name, String playerName) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        if(!parent.areBanksEnabled()) return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"Banks are disabled.");
+        if (!parent.areBanksEnabled())
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Banks are disabled.");
         return null;
     }
 
     @Override
     public List<String> getBanks() {
-        if(!parent.areBanksEnabled()) return Collections.emptyList();
+        if (!parent.areBanksEnabled()) return Collections.emptyList();
         return List.of();
     }
 

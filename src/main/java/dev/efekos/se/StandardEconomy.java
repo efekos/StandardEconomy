@@ -28,9 +28,17 @@ import java.util.List;
 
 public final class StandardEconomy extends JavaPlugin {
 
+    private static EconomyProvider provider;
     private Config config;
     private Table<PlayerAccount> accounts;
-    private static EconomyProvider provider;
+
+    public static EconomyProvider getProvider() {
+        return provider;
+    }
+
+    public static Component format(String message, TagResolver... components) {
+        return MiniMessage.builder().build().deserialize(message, components);
+    }
 
     @Override
     public void onEnable() {
@@ -42,30 +50,22 @@ public final class StandardEconomy extends JavaPlugin {
         setupCommands();
 
         long ms = System.currentTimeMillis() - start;
-        getLogger().info("Enabled StandardEconomy (took "+ms+"ms)");
+        getLogger().info("Enabled StandardEconomy (took " + ms + "ms)");
     }
 
     private void setupCommands() {
         LifecycleEventManager<Plugin> manager = getLifecycleManager();
-        manager.registerEventHandler(LifecycleEvents.COMMANDS,e->{
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, e -> {
             Commands registrar = e.registrar();
-            List.of(new EconomyCommand(),new BalanceCommand(),new PayCommand()).forEach(c -> c.register(registrar));
+            List.of(new EconomyCommand(), new BalanceCommand(), new PayCommand()).forEach(c -> c.register(registrar));
         });
     }
 
-    public static EconomyProvider getProvider() {
-        return provider;
-    }
-
-    public static Component format(String message, TagResolver...  components){
-        return MiniMessage.builder().build().deserialize(message,components);
-    }
-
     private boolean setupEconomy() {
-        if(foundVault()){
+        if (foundVault()) {
             getLogger().info("Found Vault. Hooking...");
             provider = new EconomyProvider(this);
-            getServer().getServicesManager().register(Economy.class,provider,this, ServicePriority.Highest);
+            getServer().getServicesManager().register(Economy.class, provider, this, ServicePriority.Highest);
             getLogger().info("Hooked into Vault.");
             return false;
         } else {
@@ -74,34 +74,41 @@ public final class StandardEconomy extends JavaPlugin {
             return true;
         }
     }
-    private boolean foundVault(){
+
+    private boolean foundVault() {
         PluginManager plm = getServer().getPluginManager();
         return plm.getPlugin("Vault") != null || plm.isPluginEnabled("Vault");
     }
+
     private void setupDatabase() {
         boolean useMySql = config.getBoolean("database.enable-external-databases", false);
         String url = useMySql ? "jdbc:mysql:" + config.getString("database.host", "localhost") + ":" + config.getString("database.port", "3306") : "jdbc:sqlite:" + Path.of(getDataFolder().getAbsolutePath(), "database");
         Database database = useMySql ? SimpleQL.createDatabase(url, "dev_efekos_se", config.getString("database.username", "admin"), config.getString("database.password", "admin")) : SimpleQL.createDatabase(url);
-        accounts = database.registerTable("accounts",PlayerAccount.class);
+        accounts = database.registerTable("accounts", PlayerAccount.class);
     }
+
     private void setupConfig() {
         config = new Config("config.yml", this);
         config.setup();
     }
+
     public boolean areBanksEnabled() {
         return config.getBoolean("enable-banks", false);
     }
+
     public String getCurrencySymbol() {
         return config.getString("currency.symbol", "$");
     }
+
     public String getCurrencyName(boolean plural) {
         return config.getString("currency." + (plural ? "plural" : "single"), plural ? "dollars" : "dollar");
     }
-    public int getFractionalDigits(){
-        return config.getInt("digits",0);
+
+    public int getFractionalDigits() {
+        return config.getInt("digits", 0);
     }
 
-    public PlayerAccount getAccount(OfflinePlayer player){
+    public PlayerAccount getAccount(OfflinePlayer player) {
         return accounts.getRow(player.getUniqueId()).orElseGet(() -> accounts.insertRow(playerAccount -> {
             playerAccount.setId(player.getUniqueId());
             playerAccount.setBalance(0);
