@@ -9,6 +9,8 @@ import dev.efekos.se.impl.EconomyProvider;
 import dev.efekos.simple_ql.SimpleQL;
 import dev.efekos.simple_ql.data.Database;
 import dev.efekos.simple_ql.data.Table;
+import dev.efekos.simple_ql.query.QueryBuilder;
+import dev.efekos.simple_ql.query.QueryResult;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -24,7 +26,9 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class StandardEconomy extends JavaPlugin {
 
@@ -118,6 +122,11 @@ public final class StandardEconomy extends JavaPlugin {
 
     public PlayerAccount getAccount(String name) {
         return getAccount(Bukkit.getOfflinePlayer(name));
+    }
+
+    public List<PlayerAccount> getTopTen(int page){
+        QueryResult<PlayerAccount> result = accounts.query(new QueryBuilder().skip(page * 10).limit(10).sortDescending("balance").getQuery());
+        return Optional.ofNullable(result.result()).orElse(new ArrayList<>());
     }
 
 }
