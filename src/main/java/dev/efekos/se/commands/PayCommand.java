@@ -23,14 +23,14 @@ public class PayCommand implements BrigaiderCommand {
                 .requires(commandSourceStack -> commandSourceStack.getSender() instanceof Player)
                 .then(Commands.argument("target", ArgumentTypes.player())
                         .then(Commands.argument("amount", DoubleArgumentType.doubleArg(0))
-                                .executes(ctx -> pay(((Player) ctx.getSource().getSender()), ctx.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst(), IntegerArgumentType.getInteger(ctx, "amount")))
+                                .executes(ctx -> pay(((Player) ctx.getSource().getSender()), ctx.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst(), DoubleArgumentType.getDouble(ctx, "amount")))
                         )
                 )
                 .build()
         );
     }
 
-    private int pay(Player sender, Player target, int amount) {
+    private int pay(Player sender, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();
         EconomyResponse res = provider.withdrawPlayer(sender, amount);
         if (!res.transactionSuccess()) {
@@ -40,11 +40,11 @@ public class PayCommand implements BrigaiderCommand {
         provider.depositPlayer(target, amount);
         target.sendMessage(format("<yellow><sender> just sent you <amount>!",
                 Placeholder.component("sender", Component.text(sender.getName(), NamedTextColor.AQUA).hoverEvent(sender)),
-                Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN))
+                Placeholder.component("amount", provider.createComponent(amount))
         ));
         sender.sendMessage(format("<yellow>Successfully sent <target> <amount>!",
                 Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target)),
-                Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN))
+                Placeholder.component("amount", provider.createComponent(amount))
         ));
         return 0;
     }
