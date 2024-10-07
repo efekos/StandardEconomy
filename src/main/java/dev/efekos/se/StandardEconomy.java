@@ -2,6 +2,7 @@ package dev.efekos.se;
 
 import dev.efekos.se.commands.BalanceCommand;
 import dev.efekos.se.commands.EconomyCommand;
+import dev.efekos.se.commands.PayCommand;
 import dev.efekos.se.config.Config;
 import dev.efekos.se.data.PlayerAccount;
 import dev.efekos.se.impl.EconomyProvider;
@@ -48,7 +49,7 @@ public final class StandardEconomy extends JavaPlugin {
         LifecycleEventManager<Plugin> manager = getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS,e->{
             Commands registrar = e.registrar();
-            List.of(new EconomyCommand(),new BalanceCommand()).forEach(c -> c.register(registrar));
+            List.of(new EconomyCommand(),new BalanceCommand(),new PayCommand()).forEach(c -> c.register(registrar));
         });
     }
 
