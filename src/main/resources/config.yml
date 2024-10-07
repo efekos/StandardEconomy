@@ -4,6 +4,7 @@ currency:
   symbol: '$'
   single: 'dollar'
   plural: 'dollars'
+default-balance: 50.00
 
 database:
   # 'true' to use MySQL, 'false' to use SQLite.

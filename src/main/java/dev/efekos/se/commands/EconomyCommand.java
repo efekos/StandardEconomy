@@ -53,7 +53,7 @@ public class EconomyCommand implements BrigaiderCommand {
     }
 
     private int reset(CommandSourceStack source, Player target) {
-        return set(source, target, 50d);
+        return set(source, target, StandardEconomy.getProvider().getDefaultBalance());
     }
 
 

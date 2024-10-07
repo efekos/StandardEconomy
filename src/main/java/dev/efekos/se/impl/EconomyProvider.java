@@ -292,4 +292,7 @@ public class EconomyProvider implements Economy {
         account.clean();
     }
 
+    public Double getDefaultBalance() {
+        return parent.getDefaultBalance();
+    }
 }

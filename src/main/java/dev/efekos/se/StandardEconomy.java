@@ -109,6 +109,10 @@ public final class StandardEconomy extends JavaPlugin {
         return config.getString("currency." + (plural ? "plural" : "single"), plural ? "dollars" : "dollar");
     }
 
+    public double getDefaultBalance(){
+        return config.getDouble("default-balance",0d);
+    }
+
     public int getFractionalDigits() {
         return config.getInt("digits", 0);
     }
@@ -116,7 +120,7 @@ public final class StandardEconomy extends JavaPlugin {
     public PlayerAccount getAccount(OfflinePlayer player) {
         return accounts.getRow(player.getUniqueId()).orElseGet(() -> accounts.insertRow(playerAccount -> {
             playerAccount.setId(player.getUniqueId());
-            playerAccount.setBalance(0);
+            playerAccount.setBalance(getDefaultBalance());
             playerAccount.setName(player.getName());
         }));
     }
