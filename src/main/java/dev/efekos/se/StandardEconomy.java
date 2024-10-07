@@ -1,5 +1,6 @@
 package dev.efekos.se;
 
+import dev.efekos.se.commands.BalTopCommand;
 import dev.efekos.se.commands.BalanceCommand;
 import dev.efekos.se.commands.EconomyCommand;
 import dev.efekos.se.commands.PayCommand;
@@ -61,7 +62,7 @@ public final class StandardEconomy extends JavaPlugin {
         LifecycleEventManager<Plugin> manager = getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, e -> {
             Commands registrar = e.registrar();
-            List.of(new EconomyCommand(), new BalanceCommand(), new PayCommand()).forEach(c -> c.register(registrar));
+            List.of(new EconomyCommand(), new BalanceCommand(), new PayCommand(),new BalTopCommand()).forEach(c -> c.register(registrar));
         });
     }
 
@@ -125,7 +126,9 @@ public final class StandardEconomy extends JavaPlugin {
     }
 
     public List<PlayerAccount> getTopTen(int page){
-        QueryResult<PlayerAccount> result = accounts.query(new QueryBuilder().skip(page * 10).limit(10).sortDescending("balance").getQuery());
+        QueryBuilder builder = new QueryBuilder();
+        if(page!=0)builder.skip(page * 10);
+        QueryResult<PlayerAccount> result = accounts.query(builder.limit(10).sortDescending("balance").getQuery());
         return Optional.ofNullable(result.result()).orElse(new ArrayList<>());
     }
 

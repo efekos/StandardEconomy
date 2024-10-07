@@ -11,9 +11,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class EconomyProvider implements Economy {
 
@@ -23,6 +21,13 @@ public class EconomyProvider implements Economy {
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
         this.format = new DecimalFormat(parent.getCurrencySymbol() + "#0." + "0".repeat(parent.getFractionalDigits()));
+    }
+
+    public Map<UUID,Double> getTopTen(int page){
+        List<PlayerAccount> ten = parent.getTopTen(page);
+        Map<UUID,Double> topTen = new TreeMap<>();
+        for (PlayerAccount account : ten) topTen.put(account.getId(),account.getBalance());
+        return topTen;
     }
 
     public Component createComponent(double amount) {
