@@ -12,7 +12,6 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -215,6 +214,7 @@ public class BankCommand implements BrigaiderCommand {
                 ofp.getPlayer().sendMessage(format("<yellow>One of the banks you are a member of, <bank> just got deleted. The balance of the bank has been sent to bank owner.", Placeholder.component("bank", bank.toComponent())));
         }
 
+        provider.deleteBank(bank.name());
         p.sendMessage(format("<yellow>Successfully deleted your bank. <amount> that was in the bank has been added to your balance.", Placeholder.component("amount", provider.createComponent(bank.balance()))));
         return 0;
     }
@@ -290,7 +290,7 @@ public class BankCommand implements BrigaiderCommand {
                 Placeholder.component("yes_button",Component.text("[YES]", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank accept"))),
                 Placeholder.component("no_button",Component.text("[NO]", NamedTextColor.RED, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank reject")))
                 ));
-        p.sendMessage(format("<red>Successfully sent invite to <target>.",
+        p.sendMessage(format("<yellow>Successfully sent invite to <target>.",
                 Placeholder.component("target",Component.text(target.getName()).hoverEvent(target))
                 ));
         return 0;
