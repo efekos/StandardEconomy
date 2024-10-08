@@ -51,7 +51,7 @@ import java.util.UUID;
 import static dev.efekos.se.StandardEconomy.format;
 import static dev.efekos.se.StandardEconomy.getKey;
 
-public class BankCommand implements BrigaiderCommand {
+public class BankCommand implements BrigadierCommand {
 
     @Override
     public void register(Commands commands) {

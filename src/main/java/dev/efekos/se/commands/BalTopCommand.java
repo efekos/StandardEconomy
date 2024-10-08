@@ -38,7 +38,7 @@ import java.util.*;
 
 import static dev.efekos.se.StandardEconomy.format;
 
-public class BalTopCommand implements BrigaiderCommand {
+public class BalTopCommand implements BrigadierCommand {
 
     @Override
     public void register(Commands commands) {

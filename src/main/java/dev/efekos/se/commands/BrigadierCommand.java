@@ -26,7 +26,7 @@ package dev.efekos.se.commands;
 
 import io.papermc.paper.command.brigadier.Commands;
 
-public interface BrigaiderCommand {
+public interface BrigadierCommand {
 
     void register(Commands commands);
 

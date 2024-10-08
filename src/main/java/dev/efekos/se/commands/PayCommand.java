@@ -38,7 +38,7 @@ import org.bukkit.entity.Player;
 
 import static dev.efekos.se.StandardEconomy.format;
 
-public class PayCommand implements BrigaiderCommand {
+public class PayCommand implements BrigadierCommand {
 
     @Override
     public void register(Commands commands) {

@@ -41,7 +41,7 @@ import java.util.List;
 
 import static dev.efekos.se.StandardEconomy.format;
 
-public class EconomyCommand implements BrigaiderCommand {
+public class EconomyCommand implements BrigadierCommand {
 
     @Override
     public void register(Commands commodore) {

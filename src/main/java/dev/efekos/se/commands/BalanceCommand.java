@@ -39,7 +39,7 @@ import java.util.List;
 
 import static dev.efekos.se.StandardEconomy.format;
 
-public class BalanceCommand implements BrigaiderCommand {
+public class BalanceCommand implements BrigadierCommand {
 
     @Override
     public void register(Commands commands) {
