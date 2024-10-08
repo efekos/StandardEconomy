@@ -5,6 +5,7 @@ currency:
   single: 'dollar'
   plural: 'dollars'
 default-balance: 50.00
+clear-cache-interval: 10 # In minutes, so the default value will reset /baltop cache every 10 minutes.
 
 database:
   # 'true' to use MySQL, 'false' to use SQLite.

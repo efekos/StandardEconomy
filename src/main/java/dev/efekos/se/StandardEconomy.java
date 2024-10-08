@@ -25,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -72,6 +73,17 @@ public final class StandardEconomy extends JavaPlugin {
             provider = new EconomyProvider(this);
             getServer().getServicesManager().register(Economy.class, provider, this, ServicePriority.Highest);
             getLogger().info("Hooked into Vault.");
+
+            long i = config.getInt("clear-cache-interval", 10) * 60 * 20L;
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    provider.clearBalTopCache();
+                    getLogger().info("Cleared /baltop cache.");
+                }
+            }.runTaskTimer(this, i,i);
+            getLogger().info("Created /baltop cache clear task.");
+
             return false;
         } else {
             getLogger().severe("Cannot find Vault! Disabling...");

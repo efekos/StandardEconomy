@@ -22,7 +22,7 @@ public class TopTenCache {
 
     private void fetch(int page){
         Map<UUID, Double> applied = fetch.apply(page);
-        while (maps.size()<page) maps.add(null);
+        while (maps.size()<page+1) maps.add(null);
         maps.set(page, applied);
     }
 
