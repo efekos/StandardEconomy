@@ -131,10 +131,46 @@ public class BankCommand implements BrigaiderCommand {
     }
 
     private int payAll(CommandSourceStack source, Player target) {
+        EconomyProvider provider = StandardEconomy.getProvider();
+        Player p = ((Player) source.getSender());
+        Bank bank = provider.getBank(p);
+        if(bank==null){
+            p.sendMessage(format("<red>You don't own a bank"));
+            return 1;
+        }
+        if(bank.balance()==0){
+            p.sendMessage(format("<red><bank> does not have any money.",Placeholder.component("bank",bank.toComponent())));
+            return 1;
+        }
+        provider.bankWithdraw(bank.name(), bank.balance());
+        provider.depositPlayer(target,bank.balance());
+        target.sendMessage(format("<yellow><amount> has been added to your balance by <bank>.",Placeholder.component("amount",provider.createComponent(bank.balance())),Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("<yellow>Successfully sent <amount> to <target> from <bank>'s balance.",
+                Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA)), Placeholder.component("bank",bank.toComponent()),
+                Placeholder.component("amount",provider.createComponent(bank.balance()))
+        ));
         return 0;
     }
 
     private int pay(CommandSourceStack source, double amount, Player target) {
+        EconomyProvider provider = StandardEconomy.getProvider();
+        Player p = ((Player) source.getSender());
+        Bank bank = provider.getBank(p);
+        if(bank==null){
+            p.sendMessage(format("<red>You don't own a bank"));
+            return 1;
+        }
+        if(bank.balance()<amount){
+            p.sendMessage(format("<red><bank> does not have <amount>.",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
+            return 1;
+        }
+        provider.bankWithdraw(bank.name(), amount);
+        provider.depositPlayer(target,amount);
+        target.sendMessage(format("<yellow><amount> has been added to your balance by <bank>.",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("<yellow>Successfully sent <amount> to <target> from <bank>'s balance.",
+                Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA)), Placeholder.component("bank",bank.toComponent()),
+                Placeholder.component("amount",provider.createComponent(amount))
+        ));
         return 0;
     }
 
@@ -145,6 +181,10 @@ public class BankCommand implements BrigaiderCommand {
         Bank bank = provider.getBank(p);
         if (bank == null) {
             p.sendMessage(format("<red>You don't own a bank"));
+            return 1;
+        }
+        if(bank.balance()==0){
+            p.sendMessage(format("<red><bank> does not have any money.",Placeholder.component("bank",bank.toComponent())));
             return 1;
         }
         provider.bankWithdraw(bank.name(), bank.balance());
