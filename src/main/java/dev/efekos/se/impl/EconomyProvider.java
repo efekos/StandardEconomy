@@ -22,7 +22,7 @@ public class EconomyProvider implements Economy {
 
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
-        this.format = new DecimalFormat(parent.getCurrencySymbol() + "#0." + "0".repeat(parent.getFractionalDigits()));
+        this.format = new DecimalFormat(parent.getCurrencySymbol() + "#,##0." + "0".repeat(parent.getFractionalDigits()));
     }
 
     private Map<UUID,Double> getTopTen(int page){
