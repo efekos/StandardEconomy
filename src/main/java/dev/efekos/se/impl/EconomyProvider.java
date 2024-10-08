@@ -1,6 +1,7 @@
 package dev.efekos.se.impl;
 
 import dev.efekos.se.StandardEconomy;
+import dev.efekos.se.data.Bank;
 import dev.efekos.se.data.BankAccount;
 import dev.efekos.se.data.PlayerAccount;
 import dev.efekos.se.data.TopTenCache;
@@ -32,6 +33,10 @@ public class EconomyProvider implements Economy {
         Map<UUID,Double> topTen = new TreeMap<>();
         for (PlayerAccount account : ten) topTen.put(account.getId(),account.getBalance());
         return topTen;
+    }
+
+    public Bank getBank(OfflinePlayer player){
+        return Bank.wrap(parent.getBankByOwner(player.getUniqueId()));
     }
 
     public Map<UUID,Double> getBalTop(int page){
@@ -207,7 +212,7 @@ public class EconomyProvider implements Economy {
         if (!parent.areBanksEnabled())
             return BANK_DISABLED_RESPONSE;
         if(parent.getBank(name) != null)return new EconomyResponse(0,0,EconomyResponse.ResponseType.FAILURE, "Bank '" + name + "' already exists");
-        if(parent.getBankByOwner(player.getUniqueId())!=null) return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE, "Player already has a bank.");
+        if(parent.getBankByOwner(player.getUniqueId())!=null) return new EconomyResponse(0,0, EconomyResponse.ResponseType.FAILURE, "Player already owns a bank.");
         parent.createBank(player,name);
         return new EconomyResponse(0,0, EconomyResponse.ResponseType.SUCCESS, null);
     }
