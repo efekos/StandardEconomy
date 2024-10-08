@@ -5,11 +5,13 @@ import dev.efekos.se.commands.BalanceCommand;
 import dev.efekos.se.commands.EconomyCommand;
 import dev.efekos.se.commands.PayCommand;
 import dev.efekos.se.config.Config;
+import dev.efekos.se.data.BankAccount;
 import dev.efekos.se.data.PlayerAccount;
 import dev.efekos.se.impl.EconomyProvider;
 import dev.efekos.simple_ql.SimpleQL;
 import dev.efekos.simple_ql.data.Database;
 import dev.efekos.simple_ql.data.Table;
+import dev.efekos.simple_ql.query.Conditions;
 import dev.efekos.simple_ql.query.QueryBuilder;
 import dev.efekos.simple_ql.query.QueryResult;
 import io.papermc.paper.command.brigadier.Commands;
@@ -31,12 +33,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public final class StandardEconomy extends JavaPlugin {
 
     private static EconomyProvider provider;
     private Config config;
     private Table<PlayerAccount> accounts;
+    private Table<BankAccount> banks;
 
     public static EconomyProvider getProvider() {
         return provider;
@@ -102,6 +106,7 @@ public final class StandardEconomy extends JavaPlugin {
         String url = useMySql ? "jdbc:mysql:" + config.getString("database.host", "localhost") + ":" + config.getString("database.port", "3306") : "jdbc:sqlite:" + Path.of(getDataFolder().getAbsolutePath(), "database");
         Database database = useMySql ? SimpleQL.createDatabase(url, "dev_efekos_se", config.getString("database.username", "admin"), config.getString("database.password", "admin")) : SimpleQL.createDatabase(url);
         accounts = database.registerTable("accounts", PlayerAccount.class);
+        if(areBanksEnabled()) banks = database.registerTable("banks",BankAccount.class);
     }
 
     private void setupConfig() {
@@ -139,6 +144,33 @@ public final class StandardEconomy extends JavaPlugin {
 
     public PlayerAccount getAccount(String name) {
         return getAccount(Bukkit.getOfflinePlayer(name));
+    }
+
+    public BankAccount getBank(String name) {
+        if(!areBanksEnabled())return null;
+        return banks.getRow(name).orElse(null);
+    }
+
+    public BankAccount getBankByOwner(UUID id) {
+        if(!areBanksEnabled())return null;
+        QueryResult<BankAccount> result = banks.query(new QueryBuilder().limit(1).filterWithCondition(Conditions.matchTextExact("owner", id.toString())).getQuery());
+        if(result.hasResult()) return result.result().getFirst();
+        return null;
+    }
+
+    public List<BankAccount> getAllBanks(){
+        if(!areBanksEnabled())return new ArrayList<>();
+        QueryResult<BankAccount> result = banks.query(new QueryBuilder().getQuery());
+        if(result.hasResult())return result.result();
+        return new ArrayList<>();
+    }
+
+    public BankAccount createBank(OfflinePlayer owner,String name){
+        return banks.insertRow(bank -> {
+            bank.setId(UUID.randomUUID());
+            bank.setOwner(owner);
+            bank.setName(name);
+        });
     }
 
     public List<PlayerAccount> getTopTen(int page){
