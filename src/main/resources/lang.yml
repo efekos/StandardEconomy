@@ -28,3 +28,41 @@ pay:
 
   success: '<yellow>Successfully sent <target> <amount>!'
   notification: '<yellow><sender> just sent you <amount>!'
+
+bank:
+
+  errors:
+
+    not-owned: '<red>You don''t own a bank.'
+    not-found: '<red>Could not find bank ''<name>''.'
+    nothing: '<red><bank> does not have any money.'
+    not-enough: '<red><bank> does not have <amount>.'
+    no-invite: '<red>You did not receive an invitation.'
+    not-member: '<red><target> is not a member of your bank.'
+
+  balance: '<yellow><bank>''s balance: <amount>'
+  deposit: '<yellow>Successfully deposited <amount> into <bank>.'
+  pay:
+    success: '<yellow>Successfully sent <amount> to <target> using <bank>''s balance.'
+    notification: '<yellow><amount> has been added to your balance by the bank <bank>.'
+  withdraw: '<yellow>Successfully withdrew <amount> from <bank>'
+  delete:
+    success: '<yellow>Successfully deleted your bank. <amount> that was in the bank has been added to your balance.'
+    notification: '<yellow>One of the banks you are a member of, <bank> just got deleted. The balance of the bank has been sent to bank owner.'
+  reject:
+    success: '<yellow>Rejected the invitation.'
+    notification: '<yellow><target> rejected your invitation'
+  accept:
+    success: '<yellow>Accepted the invitation.'
+    notification: '<yellow><target> accepted your invitation!'
+  kick:
+    success: '<yellow>Successfully kicked <target>.'
+    notification: '<yellow>You have been kicked from the bank <bank>.'
+  invite:
+    success: '<yellow>Successfully sent invite to <target>.'
+    notification: '<yellow><sender> invited you to be a member of bank <bank>. Would you like to join? <yes_button> <no_button>'
+    yes: 'YES'
+    no: 'NO'
+  create:
+    error: '<red>Could not create a bank: <message>'
+    success: '<green>Successfully created a bank!'
