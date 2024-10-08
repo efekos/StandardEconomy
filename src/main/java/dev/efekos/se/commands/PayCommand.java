@@ -31,6 +31,10 @@ public class PayCommand implements BrigaiderCommand {
     }
 
     private int pay(Player sender, Player target, Double amount) {
+        if(target.getUniqueId().equals(sender.getUniqueId())) {
+            sender.sendMessage(format("<red>You cannot send money to yourself."));
+            return 1;
+        }
         EconomyProvider provider = StandardEconomy.getProvider();
         EconomyResponse res = provider.withdrawPlayer(sender, amount);
         if (!res.transactionSuccess()) {

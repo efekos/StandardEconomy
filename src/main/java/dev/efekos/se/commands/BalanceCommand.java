@@ -20,6 +20,7 @@ public class BalanceCommand implements BrigaiderCommand {
     @Override
     public void register(Commands commands) {
         commands.register(Commands.literal("bal")
+                        .requires(source->source.getSender() instanceof Player)
                 .executes(commandContext -> {
                     if (commandContext.getSource().getSender() instanceof Player p) bal(commandContext.getSource(), p);
                     return 0;
