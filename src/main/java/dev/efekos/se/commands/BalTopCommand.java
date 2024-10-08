@@ -26,7 +26,7 @@ public class BalTopCommand implements BrigaiderCommand {
 
     private int baltop(CommandSourceStack source, int page) {
         EconomyProvider provider = StandardEconomy.getProvider();
-        Map<UUID, Double> ten = provider.getTopTen(page);
+        Map<UUID, Double> ten = provider.getBalTop(page);
 
         CommandSender sender = source.getSender();
 

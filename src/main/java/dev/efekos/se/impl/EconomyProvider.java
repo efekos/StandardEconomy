@@ -2,6 +2,7 @@ package dev.efekos.se.impl;
 
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.data.PlayerAccount;
+import dev.efekos.se.data.TopTenCache;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
@@ -17,17 +18,26 @@ public class EconomyProvider implements Economy {
 
     private final StandardEconomy parent;
     private final NumberFormat format;
+    private final TopTenCache cache = new TopTenCache(this::getTopTen);
 
     public EconomyProvider(StandardEconomy parent) {
         this.parent = parent;
         this.format = new DecimalFormat(parent.getCurrencySymbol() + "#0." + "0".repeat(parent.getFractionalDigits()));
     }
 
-    public Map<UUID,Double> getTopTen(int page){
+    private Map<UUID,Double> getTopTen(int page){
         List<PlayerAccount> ten = parent.getTopTen(page);
         Map<UUID,Double> topTen = new TreeMap<>();
         for (PlayerAccount account : ten) topTen.put(account.getId(),account.getBalance());
         return topTen;
+    }
+
+    public Map<UUID,Double> getBalTop(int page){
+        return cache.get(page);
+    }
+
+    public void clearBalTopCache(){
+        cache.clearCache();
     }
 
     public Component createComponent(double amount) {
