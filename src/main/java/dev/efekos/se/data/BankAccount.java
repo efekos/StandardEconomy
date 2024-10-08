@@ -70,4 +70,8 @@ public class BankAccount extends TableRow<BankAccount> {
         markDirty("name");
     }
 
+    public void removeMember(OfflinePlayer player) {
+        this.members.remove(player.getUniqueId());
+        markDirty("members");
+    }
 }

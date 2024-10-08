@@ -10,13 +10,18 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static dev.efekos.se.StandardEconomy.format;
@@ -214,19 +219,80 @@ public class BankCommand implements BrigaiderCommand {
         return 0;
     }
 
+    private static final Map<UUID,String> invites = new HashMap<>();
+
     private int reject(CommandSourceStack source) {
+        Player p = (Player) source.getSender();
+        if(!invites.containsKey(p.getUniqueId())){
+            p.sendMessage(format("<red>You didn't receive an invitation."));
+            return 1;
+        }
+        String bankName = invites.get(p.getUniqueId());
+        EconomyProvider provider = StandardEconomy.getProvider();
+        Bank bank = provider.getBank(bankName);
+        OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(bank.owner());
+        if(bankOwner.isOnline()) bankOwner.getPlayer().sendMessage(format("<yellow><target> rejected your invitation.",
+                Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
+        ));
+
+        invites.remove(p.getUniqueId());
+        p.sendMessage(format("<yellow>Rejected the invitation."));
         return 0;
     }
 
     private int accept(CommandSourceStack source) {
+        Player p = (Player) source.getSender();
+        EconomyProvider provider = StandardEconomy.getProvider();
+        if(!invites.containsKey(p.getUniqueId())){
+            p.sendMessage(format("<red>You didn't receive an invitation."));
+            return 1;
+        }
+        String bankName = invites.get(p.getUniqueId());
+        OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(provider.getBank(bankName).owner());
+        if(bankOwner.isOnline()) bankOwner.getPlayer().sendMessage(format("<yellow><target> accepted your invitation!",
+                Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
+        ));
+
+        invites.remove(p.getUniqueId());
+        provider.addToBank(bankName,p);
+        p.sendMessage(format("<yellow>Accepted the invitation."));
         return 0;
     }
 
     private int kick(CommandSourceStack source, Player target) {
+        EconomyProvider provider = StandardEconomy.getProvider();
+        Player p = (Player) source.getSender();
+
+        Bank bank = provider.getBank(p);
+        if (bank == null) {
+            p.sendMessage(format("<red>You don't own a bank"));
+            return 1;
+        }
+        provider.removeFromBank(bank.name(),p);
+        target.sendMessage(format("<yellow>You have been kicked from the bank <bank>",Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("<yellow>Successfully kicked <target>.",Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA).hoverEvent(target))));
         return 0;
     }
 
     private int invite(CommandSourceStack source, Player target) {
+        EconomyProvider provider = StandardEconomy.getProvider();
+        Player p = (Player) source.getSender();
+
+        Bank bank = provider.getBank(p);
+        if (bank == null) {
+            p.sendMessage(format("<red>You don't own a bank"));
+            return 1;
+        }
+        invites.put(target.getUniqueId(),bank.name());
+        target.sendMessage(format("<yellow><sender> invited you to be a member of bank <bank>. Would you like to join? <yes_button> <no_button>",
+                Placeholder.component("sender",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p)),
+                Placeholder.component("bank",bank.toComponent()),
+                Placeholder.component("yes_button",Component.text("[YES]", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank accept"))),
+                Placeholder.component("no_button",Component.text("[NO]", NamedTextColor.RED, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank reject")))
+                ));
+        p.sendMessage(format("<red>Successfully sent invite to <target>.",
+                Placeholder.component("target",Component.text(target.getName()).hoverEvent(target))
+                ));
         return 0;
     }
 
@@ -234,16 +300,17 @@ public class BankCommand implements BrigaiderCommand {
         EconomyProvider provider = StandardEconomy.getProvider();
         Player p = (Player) source.getSender();
 
+        if (!provider.isBankMember(name, p).transactionSuccess()) {
+            p.sendMessage(format("<red>This bank does not exist or you are not a member of it."));
+            return 1;
+        }
+
         EconomyResponse res = provider.withdrawPlayer(p, amount);
         if (!res.transactionSuccess()) {
             p.sendMessage(format("<red>You don't have <amount>", Placeholder.component("amount", provider.createComponent(amount))));
             return 1;
         }
 
-        if (!provider.isBankMember(name, p).transactionSuccess()) {
-            p.sendMessage(format("<red>This bank does not exist or you are not a member of it."));
-            return 1;
-        }
         provider.bankDeposit(name, amount);
         p.sendMessage(format("<yellow>Successfully deposited <amount> into <bank>.", Placeholder.component("bank", Component.text(name, NamedTextColor.AQUA)), Placeholder.component("amount", provider.createComponent(amount))));
         return 0;

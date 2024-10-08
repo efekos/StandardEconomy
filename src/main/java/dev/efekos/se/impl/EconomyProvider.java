@@ -51,6 +51,24 @@ public class EconomyProvider implements Economy {
         return Component.text(format.format(amount), NamedTextColor.GREEN).hoverEvent(Component.text(amount+" "+parent.getCurrencyName(amount!=1),NamedTextColor.GREEN));
     }
 
+    public void addToBank(String name,OfflinePlayer player){
+        BankAccount bank = parent.getBank(name);
+        if(bank==null)return;
+        if(bank.getOwner().getUniqueId().equals(player.getUniqueId()))return;
+        if(bank.getMembers().contains(player))return;
+        bank.addMember(player);
+        bank.clean();
+    }
+
+    public void removeFromBank(String name,OfflinePlayer player){
+        BankAccount bank = parent.getBank(name);
+        if(bank==null)return;
+        if(bank.getOwner().getUniqueId().equals(player.getUniqueId()))return;
+        if(!bank.getMembers().contains(player))return;
+        bank.removeMember(player);
+        bank.clean();
+    }
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -343,4 +361,7 @@ public class EconomyProvider implements Economy {
         return parent.getDefaultBalance();
     }
 
+    public Bank getBank(String bankName) {
+        return Bank.wrap(parent.getBank(bankName));
+    }
 }
