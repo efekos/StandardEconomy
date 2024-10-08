@@ -61,15 +61,6 @@ public class BankAccount extends TableRow<BankAccount> {
         markDirty("owner");
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-        markDirty("name");
-    }
-
     public String getName() {
         return name;
     }
