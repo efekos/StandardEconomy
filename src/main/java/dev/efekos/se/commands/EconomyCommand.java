@@ -46,7 +46,7 @@ public class EconomyCommand implements BrigaiderCommand {
                 )
                 .then(Commands.literal("reset")
                         .then(Commands.argument("target", ArgumentTypes.player())
-                                .executes(commandContext -> reset(commandContext.getSource(), commandContext.getArgument("target", Player.class)))
+                                .executes(commandContext -> reset(commandContext.getSource(), commandContext.getArgument("target", PlayerSelectorArgumentResolver.class).resolve(commandContext.getSource()).getFirst()))
                         )
                 )
                 .build(), List.of("eco"));

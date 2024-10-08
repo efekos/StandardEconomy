@@ -152,7 +152,7 @@ public final class StandardEconomy extends JavaPlugin {
     public BankAccount getBankByOwner(UUID id) {
         if(!areBanksEnabled())return null;
         QueryResult<BankAccount> result = banks.query(new QueryBuilder().limit(1).filterWithCondition(Conditions.matchTextExact("owner", id.toString())).getQuery());
-        if(result.hasResult()) return result.result().getFirst();
+        if(result.hasResult()) return result.result().isEmpty()?null:result.result().getFirst();
         return null;
     }
 
