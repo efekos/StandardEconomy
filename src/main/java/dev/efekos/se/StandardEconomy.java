@@ -1,9 +1,6 @@
 package dev.efekos.se;
 
-import dev.efekos.se.commands.BalTopCommand;
-import dev.efekos.se.commands.BalanceCommand;
-import dev.efekos.se.commands.EconomyCommand;
-import dev.efekos.se.commands.PayCommand;
+import dev.efekos.se.commands.*;
 import dev.efekos.se.config.Config;
 import dev.efekos.se.data.BankAccount;
 import dev.efekos.se.data.PlayerAccount;
@@ -68,6 +65,7 @@ public final class StandardEconomy extends JavaPlugin {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, e -> {
             Commands registrar = e.registrar();
             List.of(new EconomyCommand(), new BalanceCommand(), new PayCommand(),new BalTopCommand()).forEach(c -> c.register(registrar));
+            if(areBanksEnabled()) new BankCommand().register(registrar);
         });
     }
 
@@ -165,8 +163,8 @@ public final class StandardEconomy extends JavaPlugin {
         return new ArrayList<>();
     }
 
-    public BankAccount createBank(OfflinePlayer owner,String name){
-        return banks.insertRow(bank -> {
+    public void createBank(OfflinePlayer owner,String name){
+        banks.insertRow(bank -> {
             bank.setOwner(owner);
             bank.setName(name);
             bank.setBalance(0);
