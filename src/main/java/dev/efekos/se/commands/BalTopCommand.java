@@ -36,7 +36,8 @@ public class BalTopCommand implements BrigaiderCommand {
         }
 
 
-        sender.sendMessage(format("<dark_green>---------- <green>BalTop Page <page> <dark_green>----------", Placeholder.unparsed("page",(page+1)+"")));
+        String pageString = (page + 1) + "";
+        sender.sendMessage(format("<dark_green>---------- <green>BalTop Page <page> <dark_green>----------", Placeholder.unparsed("page", pageString)));
 
         Set<UUID> keys = ten.keySet();
         UUID[] uuids = keys.toArray(UUID[]::new);
@@ -53,7 +54,7 @@ public class BalTopCommand implements BrigaiderCommand {
 
         }
 
-        sender.sendMessage(format("<dark_green>----------------------------------<page_adder>", Placeholder.unparsed("page_adder","-".repeat((page+"").length()))));
+        sender.sendMessage(format("<dark_green>----------------------------------<page_adder>", Placeholder.unparsed("page_adder","-".repeat(pageString.length()))));
 
         return 0;
     }

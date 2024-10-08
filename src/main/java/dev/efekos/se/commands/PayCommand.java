@@ -38,7 +38,7 @@ public class PayCommand implements BrigaiderCommand {
         EconomyProvider provider = StandardEconomy.getProvider();
         EconomyResponse res = provider.withdrawPlayer(sender, amount);
         if (!res.transactionSuccess()) {
-            sender.sendMessage(format("<red>You do not have enough money."));
+            sender.sendMessage(format("<red>You do not have enough money.",Placeholder.component("amount",provider.createComponent(amount))));
             return 1;
         }
         provider.depositPlayer(target, amount);

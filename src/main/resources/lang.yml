@@ -1,0 +1,30 @@
+balance-self: '<yellow>Your balance: <amount>'
+balance-other: '<yellow><target>''s balance: <amount>'
+
+baltop:
+
+  not-enough: '<red>Cannot get anyone to be in top 10 yet.'
+  too-deep: '<red>Cannot go that deep yet.'
+
+  header: '<dark_green>---------- <green>BalTop Page <page> <dark_green>----------'
+  entry: '<dark_green><place>. <green><name></green> - <amount>'
+  footer: '<dark_green>----------------------------------<page_adder>'
+
+eco:
+  remove:
+    success: '<yellow>Removed <amount> from <target>''s balance.'
+    notification: '<yellow><amount> has been removed from your balance.'
+  add:
+    success: '<yellow>Added <amount> to <target>''s balance.'
+    notification: '<yellow><amount> has been added to your balance.'
+  change:
+    success: '<yellow>Changed <target>''s balance to <amount>.'
+    notification: '<yellow>Your balance has been changed to <amount>.'
+
+pay:
+
+  self: '<red>You cannot send money to yourself.'
+  cant-afford: '<red>You don''t have <amount>.'
+
+  success: '<yellow>Successfully sent <target> <amount>!'
+  notification: '<yellow><sender> just sent you <amount>!'
