@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static dev.efekos.se.StandardEconomy.format;
@@ -211,7 +212,7 @@ public class BankCommand implements BrigaiderCommand {
         for (UUID member : bank.members()) {
             OfflinePlayer ofp = Bukkit.getOfflinePlayer(member);
             if (ofp.isOnline())
-                ofp.getPlayer().sendMessage(format("<yellow>One of the banks you are a member of, <bank> just got deleted. The balance of the bank has been sent to bank owner.", Placeholder.component("bank", bank.toComponent())));
+                Optional.ofNullable(ofp.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow>One of the banks you are a member of, <bank> just got deleted. The balance of the bank has been sent to bank owner.", Placeholder.component("bank", bank.toComponent()))));
         }
 
         provider.deleteBank(bank.name());
@@ -231,9 +232,9 @@ public class BankCommand implements BrigaiderCommand {
         EconomyProvider provider = StandardEconomy.getProvider();
         Bank bank = provider.getBank(bankName);
         OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(bank.owner());
-        if(bankOwner.isOnline()) bankOwner.getPlayer().sendMessage(format("<yellow><target> rejected your invitation.",
+        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow><target> rejected your invitation.",
                 Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
-        ));
+        )));
 
         invites.remove(p.getUniqueId());
         p.sendMessage(format("<yellow>Rejected the invitation."));
@@ -249,9 +250,9 @@ public class BankCommand implements BrigaiderCommand {
         }
         String bankName = invites.get(p.getUniqueId());
         OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(provider.getBank(bankName).owner());
-        if(bankOwner.isOnline()) bankOwner.getPlayer().sendMessage(format("<yellow><target> accepted your invitation!",
+        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow><target> accepted your invitation!",
                 Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
-        ));
+        )));
 
         invites.remove(p.getUniqueId());
         provider.addToBank(bankName,p);

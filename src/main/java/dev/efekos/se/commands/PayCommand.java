@@ -1,7 +1,6 @@
 package dev.efekos.se.commands;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
 import io.papermc.paper.command.brigadier.Commands;

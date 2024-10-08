@@ -49,7 +49,7 @@ public class BalTopCommand implements BrigaiderCommand {
             sender.sendMessage(format("<dark_green><place>. <green><name> <dark_green>- <amount>",
                     Placeholder.component("amount", provider.createComponent(amount)),
                     Placeholder.unparsed("place", (page*10+i+1)+""),
-                    Placeholder.unparsed("name", player.getName())
+                    Placeholder.unparsed("name", Optional.ofNullable(player.getName()).orElse("?????"))
             ));
 
         }
