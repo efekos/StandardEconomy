@@ -167,9 +167,9 @@ public final class StandardEconomy extends JavaPlugin {
 
     public BankAccount createBank(OfflinePlayer owner,String name){
         return banks.insertRow(bank -> {
-            bank.setId(UUID.randomUUID());
             bank.setOwner(owner);
             bank.setName(name);
+            bank.setBalance(0);
         });
     }
 
