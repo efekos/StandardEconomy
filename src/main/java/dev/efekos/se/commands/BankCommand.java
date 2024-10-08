@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static dev.efekos.se.StandardEconomy.format;
+import static dev.efekos.se.StandardEconomy.getKey;
 
 public class BankCommand implements BrigaiderCommand {
 
@@ -100,10 +101,10 @@ public class BankCommand implements BrigaiderCommand {
 
         EconomyResponse response = provider.bankBalance(name);
         if(!response.transactionSuccess()){
-            p.sendMessage(format("<red>Could not find bank '<name>'",Placeholder.unparsed("name",name)));
+            p.sendMessage(format("bank.errors.not-found",Placeholder.unparsed("name",name)));
             return 1;
         }
-        p.sendMessage(format("<yellow><bank>'s balance: <amount>",Placeholder.component("bank",Component.text(name,NamedTextColor.AQUA)),Placeholder.component("amount",provider.createComponent(response.balance))));
+        p.sendMessage(format("bank.balance",Placeholder.component("bank",Component.text(name,NamedTextColor.AQUA)),Placeholder.component("amount",provider.createComponent(response.balance))));
         return 0;
     }
 
@@ -113,10 +114,10 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
-        p.sendMessage(format("<yellow><bank>'s balance: <amount>",Placeholder.component("bank",bank.toComponent()),Placeholder.component("amount",provider.createComponent(bank.balance()))));
+        p.sendMessage(format("bank.balance",Placeholder.component("bank",bank.toComponent()),Placeholder.component("amount",provider.createComponent(bank.balance()))));
         return 0;
     }
 
@@ -126,12 +127,12 @@ public class BankCommand implements BrigaiderCommand {
 
         double amount = provider.getBalance(p);
         if (!provider.isBankMember(name, p).transactionSuccess()) {
-            p.sendMessage(format("<red>This bank does not exist or you are not a member of it."));
+            p.sendMessage(format("bank.errors.not-owned",Placeholder.unparsed("name",name)));
             return 1;
         }
         provider.withdrawPlayer(p, amount);
         provider.bankDeposit(name, amount);
-        p.sendMessage(format("<yellow>Successfully deposited <amount> into <bank>.", Placeholder.component("bank", Component.text(name, NamedTextColor.AQUA)), Placeholder.component("amount", provider.createComponent(amount))));
+        p.sendMessage(format("bank.deposit", Placeholder.component("bank", Component.text(name, NamedTextColor.AQUA)), Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
@@ -140,17 +141,17 @@ public class BankCommand implements BrigaiderCommand {
         Player p = ((Player) source.getSender());
         Bank bank = provider.getBank(p);
         if(bank==null){
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
         if(bank.balance()==0){
-            p.sendMessage(format("<red><bank> does not have any money.",Placeholder.component("bank",bank.toComponent())));
+            p.sendMessage(format("bank.errors.nothing",Placeholder.component("bank",bank.toComponent())));
             return 1;
         }
         provider.bankWithdraw(bank.name(), bank.balance());
         provider.depositPlayer(target,bank.balance());
-        target.sendMessage(format("<yellow><amount> has been added to your balance by <bank>.",Placeholder.component("amount",provider.createComponent(bank.balance())),Placeholder.component("bank",bank.toComponent())));
-        p.sendMessage(format("<yellow>Successfully sent <amount> to <target> from <bank>'s balance.",
+        target.sendMessage(format("bank.pay.notification",Placeholder.component("amount",provider.createComponent(bank.balance())),Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("bank.pay.success",
                 Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA)), Placeholder.component("bank",bank.toComponent()),
                 Placeholder.component("amount",provider.createComponent(bank.balance()))
         ));
@@ -162,17 +163,17 @@ public class BankCommand implements BrigaiderCommand {
         Player p = ((Player) source.getSender());
         Bank bank = provider.getBank(p);
         if(bank==null){
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
         if(bank.balance()<amount){
-            p.sendMessage(format("<red><bank> does not have <amount>.",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
+            p.sendMessage(format("bank.errors.not-enough",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
             return 1;
         }
         provider.bankWithdraw(bank.name(), amount);
         provider.depositPlayer(target,amount);
-        target.sendMessage(format("<yellow><amount> has been added to your balance by <bank>.",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
-        p.sendMessage(format("<yellow>Successfully sent <amount> to <target> from <bank>'s balance.",
+        target.sendMessage(format("bank.pay.notification",Placeholder.component("amount",provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("bank.pay.success",
                 Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA)), Placeholder.component("bank",bank.toComponent()),
                 Placeholder.component("amount",provider.createComponent(amount))
         ));
@@ -185,16 +186,16 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
         if(bank.balance()==0){
-            p.sendMessage(format("<red><bank> does not have any money.",Placeholder.component("bank",bank.toComponent())));
+            p.sendMessage(format("bank.errors.nothing",Placeholder.component("bank",bank.toComponent())));
             return 1;
         }
         provider.bankWithdraw(bank.name(), bank.balance());
         provider.depositPlayer(p, bank.balance());
-        p.sendMessage(format("<yellow>Successfully withdrew <amount> from <bank>",
+        p.sendMessage(format("bank.withdraw",
                 Placeholder.component("amount", provider.createComponent(bank.balance())), Placeholder.component("bank", bank.toComponent())));
         return 0;
     }
@@ -205,18 +206,18 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.not-owned"));
             return 1;
         }
         provider.depositPlayer(p, bank.balance());
         for (UUID member : bank.members()) {
             OfflinePlayer ofp = Bukkit.getOfflinePlayer(member);
             if (ofp.isOnline())
-                Optional.ofNullable(ofp.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow>One of the banks you are a member of, <bank> just got deleted. The balance of the bank has been sent to bank owner.", Placeholder.component("bank", bank.toComponent()))));
+                Optional.ofNullable(ofp.getPlayer()).ifPresent(plr->plr.sendMessage(format("bank.delete.notification", Placeholder.component("bank", bank.toComponent()))));
         }
 
         provider.deleteBank(bank.name());
-        p.sendMessage(format("<yellow>Successfully deleted your bank. <amount> that was in the bank has been added to your balance.", Placeholder.component("amount", provider.createComponent(bank.balance()))));
+        p.sendMessage(format("bank.delete.success", Placeholder.component("amount", provider.createComponent(bank.balance()))));
         return 0;
     }
 
@@ -225,19 +226,19 @@ public class BankCommand implements BrigaiderCommand {
     private int reject(CommandSourceStack source) {
         Player p = (Player) source.getSender();
         if(!invites.containsKey(p.getUniqueId())){
-            p.sendMessage(format("<red>You didn't receive an invitation."));
+            p.sendMessage(format("bank.errors.no-invite"));
             return 1;
         }
         String bankName = invites.get(p.getUniqueId());
         EconomyProvider provider = StandardEconomy.getProvider();
         Bank bank = provider.getBank(bankName);
         OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(bank.owner());
-        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow><target> rejected your invitation.",
+        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("bank.reject.notification",
                 Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
         )));
 
         invites.remove(p.getUniqueId());
-        p.sendMessage(format("<yellow>Rejected the invitation."));
+        p.sendMessage(format("bank.reject.success"));
         return 0;
     }
 
@@ -245,18 +246,18 @@ public class BankCommand implements BrigaiderCommand {
         Player p = (Player) source.getSender();
         EconomyProvider provider = StandardEconomy.getProvider();
         if(!invites.containsKey(p.getUniqueId())){
-            p.sendMessage(format("<red>You didn't receive an invitation."));
+            p.sendMessage(format("bank.errors.no-invite"));
             return 1;
         }
         String bankName = invites.get(p.getUniqueId());
         OfflinePlayer bankOwner = Bukkit.getOfflinePlayer(provider.getBank(bankName).owner());
-        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("<yellow><target> accepted your invitation!",
+        if(bankOwner.isOnline()) Optional.ofNullable(bankOwner.getPlayer()).ifPresent(plr->plr.sendMessage(format("bank.accept.notification",
                 Placeholder.component("target",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p))
         )));
 
         invites.remove(p.getUniqueId());
         provider.addToBank(bankName,p);
-        p.sendMessage(format("<yellow>Accepted the invitation."));
+        p.sendMessage(format("bank.accept.success"));
         return 0;
     }
 
@@ -266,12 +267,15 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
+        if(!bank.members().contains(target.getUniqueId())){
+            p.sendMessage(format("bank.errors.not-member",Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA).hoverEvent(target))));
+        }
         provider.removeFromBank(bank.name(),p);
-        target.sendMessage(format("<yellow>You have been kicked from the bank <bank>",Placeholder.component("bank",bank.toComponent())));
-        p.sendMessage(format("<yellow>Successfully kicked <target>.",Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA).hoverEvent(target))));
+        target.sendMessage(format("bank.kick.notification",Placeholder.component("bank",bank.toComponent())));
+        p.sendMessage(format("bank.kick.success",Placeholder.component("target",Component.text(target.getName(),NamedTextColor.AQUA).hoverEvent(target))));
         return 0;
     }
 
@@ -281,17 +285,17 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
         invites.put(target.getUniqueId(),bank.name());
-        target.sendMessage(format("<yellow><sender> invited you to be a member of bank <bank>. Would you like to join? <yes_button> <no_button>",
+        target.sendMessage(format("bank.invite.notification",
                 Placeholder.component("sender",Component.text(p.getName(),NamedTextColor.AQUA).hoverEvent(p)),
                 Placeholder.component("bank",bank.toComponent()),
-                Placeholder.component("yes_button",Component.text("[YES]", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank accept"))),
-                Placeholder.component("no_button",Component.text("[NO]", NamedTextColor.RED, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank reject")))
+                Placeholder.component("yes_button",Component.text("["+getKey("bank.invite.yes")+"]", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank accept"))),
+                Placeholder.component("no_button",Component.text("["+getKey("bank.invite.no")+"]", NamedTextColor.RED, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand("/bank reject")))
                 ));
-        p.sendMessage(format("<yellow>Successfully sent invite to <target>.",
+        p.sendMessage(format("bank.invite.success",
                 Placeholder.component("target",Component.text(target.getName()).hoverEvent(target))
                 ));
         return 0;
@@ -302,18 +306,18 @@ public class BankCommand implements BrigaiderCommand {
         Player p = (Player) source.getSender();
 
         if (!provider.isBankMember(name, p).transactionSuccess()) {
-            p.sendMessage(format("<red>This bank does not exist or you are not a member of it."));
+            p.sendMessage(format("bank.errors.not-found",Placeholder.component("name",Component.text(name,NamedTextColor.AQUA))));
             return 1;
         }
 
         EconomyResponse res = provider.withdrawPlayer(p, amount);
         if (!res.transactionSuccess()) {
-            p.sendMessage(format("<red>You don't have <amount>", Placeholder.component("amount", provider.createComponent(amount))));
+            p.sendMessage(format("pay.cant-afford", Placeholder.component("amount", provider.createComponent(amount))));
             return 1;
         }
 
         provider.bankDeposit(name, amount);
-        p.sendMessage(format("<yellow>Successfully deposited <amount> into <bank>.", Placeholder.component("bank", Component.text(name, NamedTextColor.AQUA)), Placeholder.component("amount", provider.createComponent(amount))));
+        p.sendMessage(format("bank.deposit", Placeholder.component("bank", Component.text(name, NamedTextColor.AQUA)), Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
@@ -323,16 +327,16 @@ public class BankCommand implements BrigaiderCommand {
 
         Bank bank = provider.getBank(p);
         if (bank == null) {
-            p.sendMessage(format("<red>You don't own a bank"));
+            p.sendMessage(format("bank.errors.not-owned"));
             return 1;
         }
         EconomyResponse res = provider.bankWithdraw(bank.name(), amount);
         if(!res.transactionSuccess()){
-            p.sendMessage(format("<red><bank> does not have <amount>",Placeholder.component("amount", provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
+            p.sendMessage(format("bank.errors.not-enough",Placeholder.component("amount", provider.createComponent(amount)),Placeholder.component("bank",bank.toComponent())));
             return 1;
         }
         provider.depositPlayer(p, amount);
-        p.sendMessage(format("<yellow>Successfully withdrew <amount> from <bank>",
+        p.sendMessage(format("bank.withdraw",
                 Placeholder.component("amount", provider.createComponent(amount)), Placeholder.component("bank", bank.toComponent())));
         return 0;
     }
@@ -342,10 +346,10 @@ public class BankCommand implements BrigaiderCommand {
         EconomyProvider provider = StandardEconomy.getProvider();
         EconomyResponse response = provider.createBank(name, p);
         if (response.type != EconomyResponse.ResponseType.SUCCESS) {
-            p.sendMessage(format("<red>Could not create a bank: <message>", Placeholder.unparsed("message", response.errorMessage)));
+            p.sendMessage(format("bank.create.error", Placeholder.unparsed("message", response.errorMessage)));
             return 1;
         }
-        p.sendMessage(format("<green>Successfully created a bank!"));
+        p.sendMessage(format("bank.create.success"));
         return 0;
     }
 

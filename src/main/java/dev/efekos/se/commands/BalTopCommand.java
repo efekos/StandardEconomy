@@ -31,13 +31,13 @@ public class BalTopCommand implements BrigaiderCommand {
         CommandSender sender = source.getSender();
 
         if(ten.isEmpty()){
-            sender.sendMessage(format(page==0?"<red>Can't get anyone to be in top 10 yet.":"<red>Can't go that deep yet."));
+            sender.sendMessage(format(page==0?"baltop.not-enough":"baltop.too-deep"));
             return 1;
         }
 
 
         String pageString = (page + 1) + "";
-        sender.sendMessage(format("<dark_green>---------- <green>BalTop Page <page> <dark_green>----------", Placeholder.unparsed("page", pageString)));
+        sender.sendMessage(format("baltop.header", Placeholder.unparsed("page", pageString)));
 
         Set<UUID> keys = ten.keySet();
         UUID[] uuids = keys.toArray(UUID[]::new);
@@ -46,7 +46,7 @@ public class BalTopCommand implements BrigaiderCommand {
             OfflinePlayer player = Bukkit.getOfflinePlayer(id);
             Double amount = ten.get(id);
 
-            sender.sendMessage(format("<dark_green><place>. <green><name> <dark_green>- <amount>",
+            sender.sendMessage(format("baltop.entry",
                     Placeholder.component("amount", provider.createComponent(amount)),
                     Placeholder.unparsed("place", (page*10+i+1)+""),
                     Placeholder.unparsed("name", Optional.ofNullable(player.getName()).orElse("?????"))
@@ -54,7 +54,7 @@ public class BalTopCommand implements BrigaiderCommand {
 
         }
 
-        sender.sendMessage(format("<dark_green>----------------------------------<page_adder>", Placeholder.unparsed("page_adder","-".repeat(pageString.length()))));
+        sender.sendMessage(format("baltop.footer", Placeholder.unparsed("page_adder","-".repeat(pageString.length()))));
 
         return 0;
     }

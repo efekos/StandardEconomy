@@ -60,27 +60,27 @@ public class EconomyCommand implements BrigaiderCommand {
     private int remove(CommandSourceStack source, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();
         provider.setBalance(target, provider.getBalance(target) - amount);
-        source.getSender().sendMessage(format("<yellow>Removed <amount> from <target>'s balance.", Placeholder.component("amount", provider.createComponent(amount)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
-        target.sendMessage(format("<yellow><amount> has been removed from your balance.", Placeholder.component("amount", provider.createComponent(amount))));
+        source.getSender().sendMessage(format("eco.remove.success", Placeholder.component("amount", provider.createComponent(amount)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
+        target.sendMessage(format("eco.remove.notification", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
     private int add(CommandSourceStack source, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();
         provider.setBalance(target, provider.getBalance(target) + amount);
-        source.getSender().sendMessage(format("<yellow>Added <amount> to <target>'s balance.",
+        source.getSender().sendMessage(format("eco.add.success",
                 Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))
         ));
-        target.sendMessage(format("<yellow><amount> has been added to your balance.", Placeholder.component("amount", provider.createComponent(amount))));
+        target.sendMessage(format("eco.add.notification", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 
     private int set(CommandSourceStack source, Player target, Double amount) {
         EconomyProvider provider = StandardEconomy.getProvider();
         provider.setBalance(target, amount);
-        source.getSender().sendMessage(format("<yellow>Changed <target>'s balance to <amount>.",
+        source.getSender().sendMessage(format("eco.change.success",
                 Placeholder.component("amount", Component.text(provider.format(amount), NamedTextColor.GREEN)), Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target))));
-        target.sendMessage(format("<yellow>Your balance has been changed to <amount>.", Placeholder.component("amount", provider.createComponent(amount))));
+        target.sendMessage(format("eco.change.notification", Placeholder.component("amount", provider.createComponent(amount))));
         return 0;
     }
 

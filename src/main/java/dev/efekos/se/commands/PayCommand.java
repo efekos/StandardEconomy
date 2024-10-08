@@ -31,21 +31,21 @@ public class PayCommand implements BrigaiderCommand {
 
     private int pay(Player sender, Player target, Double amount) {
         if(target.getUniqueId().equals(sender.getUniqueId())) {
-            sender.sendMessage(format("<red>You cannot send money to yourself."));
+            sender.sendMessage(format("pay.self"));
             return 1;
         }
         EconomyProvider provider = StandardEconomy.getProvider();
         EconomyResponse res = provider.withdrawPlayer(sender, amount);
         if (!res.transactionSuccess()) {
-            sender.sendMessage(format("<red>You do not have enough money.",Placeholder.component("amount",provider.createComponent(amount))));
+            sender.sendMessage(format("pay.cant-afford",Placeholder.component("amount",provider.createComponent(amount))));
             return 1;
         }
         provider.depositPlayer(target, amount);
-        target.sendMessage(format("<yellow><sender> just sent you <amount>!",
+        target.sendMessage(format("pay.notification",
                 Placeholder.component("sender", Component.text(sender.getName(), NamedTextColor.AQUA).hoverEvent(sender)),
                 Placeholder.component("amount", provider.createComponent(amount))
         ));
-        sender.sendMessage(format("<yellow>Successfully sent <target> <amount>!",
+        sender.sendMessage(format("pay.success",
                 Placeholder.component("target", Component.text(target.getName(), NamedTextColor.AQUA).hoverEvent(target)),
                 Placeholder.component("amount", provider.createComponent(amount))
         ));

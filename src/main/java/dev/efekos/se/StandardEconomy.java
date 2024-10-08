@@ -36,6 +36,7 @@ public final class StandardEconomy extends JavaPlugin {
 
     private static EconomyProvider provider;
     private Config config;
+    private static Config language;
     private Table<PlayerAccount> accounts;
     private Table<BankAccount> banks;
 
@@ -44,7 +45,11 @@ public final class StandardEconomy extends JavaPlugin {
     }
 
     public static Component format(String message, TagResolver... components) {
-        return MiniMessage.builder().build().deserialize(message, components);
+        return MiniMessage.builder().build().deserialize(language.getString(message,"<red>"+message+"</red>"), components);
+    }
+
+    public static String getKey(String key){
+        return language.getString(key,key);
     }
 
     @Override
@@ -110,6 +115,8 @@ public final class StandardEconomy extends JavaPlugin {
     private void setupConfig() {
         config = new Config("config.yml", this);
         config.setup();
+        language = new Config("lang.yml",this);
+        language.setup();
     }
 
     public boolean areBanksEnabled() {
