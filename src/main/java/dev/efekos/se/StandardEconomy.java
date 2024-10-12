@@ -24,6 +24,9 @@
 
 package dev.efekos.se;
 
+import dev.efekos.arn.common.Arn;
+import dev.efekos.arn.common.ArnInstance;
+import dev.efekos.arn.common.exception.ArnException;
 import dev.efekos.se.commands.*;
 import dev.efekos.se.config.Config;
 import dev.efekos.se.data.BankAccount;
@@ -91,11 +94,15 @@ public final class StandardEconomy extends JavaPlugin {
 
     private void setupCommands() {
         LifecycleEventManager<Plugin> manager = getLifecycleManager();
-        manager.registerEventHandler(LifecycleEvents.COMMANDS, e -> {
-            Commands registrar = e.registrar();
-            List.of(new EconomyCommand(), new BalanceCommand(), new PayCommand(),new BalTopCommand()).forEach(c -> c.register(registrar));
-            if(areBanksEnabled()) new BankCommand().register(registrar);
-        });
+
+        ArnInstance arn = Arn.getInstance();
+        try {
+            arn.run(StandardEconomy.class,this);
+        } catch (ArnException e) {
+            e.printStackTrace();
+            getLogger().severe("Could not register commands!");
+        }
+
     }
 
     private boolean setupEconomy() {

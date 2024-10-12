@@ -42,10 +42,11 @@
                 </executions>
                 <configuration>
                     <artifactSet>
-                        <includes>
-                            <include>dev.efekos:SimpleQL</include>
-                            <include>com.github.xerial:sqlite-jdbc</include>
-                        </includes>
+                       <excludes>
+                           <exclude>com.github.MilkBowl:VaultAPI</exclude>
+                           <exclude>com.mojang:brigadier</exclude>
+                           <exclude>io.papermc.paper:paper-api</exclude>
+                       </excludes>
                     </artifactSet>
                 </configuration>
             </plugin>
@@ -83,7 +84,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
+        <repository>
+            <id>local</id>
+            <url>file://C:\EfekosDev\Maven</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -114,6 +118,11 @@
             <artifactId>brigadier</artifactId>
             <version>1.0.18</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.efekos.arn</groupId>
+            <artifactId>arn-paper</artifactId>
+            <version>0.4.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -25,6 +25,8 @@
 package dev.efekos.se.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import dev.efekos.arn.common.annotation.Command;
+import dev.efekos.arn.common.annotation.CommandArgument;
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -38,21 +40,17 @@ import java.util.*;
 
 import static dev.efekos.se.StandardEconomy.format;
 
-public class BalTopCommand implements BrigadierCommand {
+public class BalTopCommand {
 
-    @Override
-    public void register(Commands commands) {
-        commands.register(Commands.literal("baltop")
-                        .executes(ctx -> baltop(ctx.getSource(),0))
-                        .then(Commands.argument("page", IntegerArgumentType.integer(1)).executes(ctx -> baltop(ctx.getSource(),IntegerArgumentType.getInteger(ctx,"page")-1)))
-                .build());
+    @Command("baltop")
+    public int baltop(CommandSender sender){
+        return baltop(sender,0);
     }
 
-    private int baltop(CommandSourceStack source, int page) {
+    @Command("baltop")
+    public int baltop(CommandSender sender, @CommandArgument("page") int page) {
         EconomyProvider provider = StandardEconomy.getProvider();
         Map<UUID, Double> ten = provider.getBalTop(page);
-
-        CommandSender sender = source.getSender();
 
         if(ten.isEmpty()){
             sender.sendMessage(format(page==0?"baltop.not-enough":"baltop.too-deep"));
