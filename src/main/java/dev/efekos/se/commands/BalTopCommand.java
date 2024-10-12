@@ -24,13 +24,11 @@
 
 package dev.efekos.se.commands;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import dev.efekos.arn.common.annotation.Command;
 import dev.efekos.arn.common.annotation.CommandArgument;
+import dev.efekos.arn.common.annotation.Container;
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
-import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -40,6 +38,7 @@ import java.util.*;
 
 import static dev.efekos.se.StandardEconomy.format;
 
+@Container
 public class BalTopCommand {
 
     @Command("baltop")
