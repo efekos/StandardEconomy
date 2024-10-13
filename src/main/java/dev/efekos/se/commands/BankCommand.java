@@ -27,6 +27,7 @@ package dev.efekos.se.commands;
 import dev.efekos.arn.common.annotation.Command;
 import dev.efekos.arn.common.annotation.CommandArgument;
 import dev.efekos.arn.common.annotation.Container;
+import dev.efekos.arn.common.annotation.Description;
 import dev.efekos.arn.common.annotation.block.BlockCommandBlock;
 import dev.efekos.arn.common.annotation.block.BlockConsole;
 import dev.efekos.arn.common.annotation.modifier.Word;
@@ -53,6 +54,7 @@ import static dev.efekos.se.StandardEconomy.format;
 import static dev.efekos.se.StandardEconomy.getKey;
 
 @Container
+@Description("Bank management.")
 public class BankCommand {
 
     @Command("bank.balance")

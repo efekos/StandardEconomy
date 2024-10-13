@@ -27,6 +27,7 @@ package dev.efekos.se.commands;
 import dev.efekos.arn.common.annotation.Command;
 import dev.efekos.arn.common.annotation.CommandArgument;
 import dev.efekos.arn.common.annotation.Container;
+import dev.efekos.arn.common.annotation.Description;
 import dev.efekos.arn.common.annotation.block.BlockCommandBlock;
 import dev.efekos.arn.common.annotation.block.BlockConsole;
 import dev.efekos.se.StandardEconomy;
@@ -40,6 +41,7 @@ import org.bukkit.entity.Player;
 import static dev.efekos.se.StandardEconomy.format;
 
 @Container
+@Description("See your balance.")
 public class BalanceCommand {
 
     @Command("bal")

@@ -27,6 +27,7 @@ package dev.efekos.se.commands;
 import dev.efekos.arn.common.annotation.Command;
 import dev.efekos.arn.common.annotation.CommandArgument;
 import dev.efekos.arn.common.annotation.Container;
+import dev.efekos.arn.common.annotation.Description;
 import dev.efekos.se.StandardEconomy;
 import dev.efekos.se.impl.EconomyProvider;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -39,6 +40,7 @@ import java.util.*;
 import static dev.efekos.se.StandardEconomy.format;
 
 @Container
+@Description("Top 10 richest players.")
 public class BalTopCommand {
 
     @Command("baltop")
