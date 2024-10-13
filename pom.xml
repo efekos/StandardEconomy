@@ -48,6 +48,12 @@
                            <exclude>io.papermc.paper:paper-api</exclude>
                        </excludes>
                     </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>dev.efekos.se</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
             <plugin>
@@ -123,6 +129,12 @@
             <groupId>dev.efekos.arn</groupId>
             <artifactId>arn-paper</artifactId>
             <version>0.4.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

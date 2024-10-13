@@ -38,16 +38,15 @@ import dev.efekos.simple_ql.data.Table;
 import dev.efekos.simple_ql.query.Conditions;
 import dev.efekos.simple_ql.query.QueryBuilder;
 import dev.efekos.simple_ql.query.QueryResult;
-import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,6 +78,8 @@ public final class StandardEconomy extends JavaPlugin {
         return language.getString(key,key);
     }
 
+    private Metrics metrics;
+
     @Override
     public void onEnable() {
         long start = System.currentTimeMillis();
@@ -87,15 +88,21 @@ public final class StandardEconomy extends JavaPlugin {
         setupDatabase();
         if (setupEconomy()) return;
         setupCommands();
+        setupMetrics();
 
         long ms = System.currentTimeMillis() - start;
         getLogger().info("Enabled StandardEconomy (took " + ms + "ms)");
     }
 
-    private void setupCommands() {
-        LifecycleEventManager<Plugin> manager = getLifecycleManager();
+    private void setupMetrics() {
+        metrics = new Metrics(this,23608);
+        metrics.addCustomChart(new SimplePie("bankUsage",() -> areBanksEnabled()?"Uses banks":"Doesn't use banks"));
+        metrics.addCustomChart(new SingleLineChart("banks",() -> getAllBanks().size()));
+    }
 
+    private void setupCommands() {
         ArnInstance arn = Arn.getInstance();
+        if(!areBanksEnabled())arn.excludeClass(BankCommand.class);
         try {
             arn.run(StandardEconomy.class,this);
         } catch (ArnException e) {
