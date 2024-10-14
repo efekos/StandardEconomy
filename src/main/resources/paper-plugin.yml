@@ -12,3 +12,5 @@ dependencies:
       load: BEFORE
       required: false
       join-classpath: true
+libraries:
+  - com.github.xerial:sqlite-jdbc:3.45.2.0
